@@ -6,7 +6,7 @@ Created on Fri Mar  5 16:04:50 2021
 @author: moke
 """
 
-from tango import  AttrWriteType, DevState,  DevFloat, DeviceProxy, DebugIt
+from tango import  AttrWriteType, DevState,  DevFloat, AttributeProxy, DebugIt
 from tango.server import Device, attribute, device_property
 import numpy as np
 import lmfit as lm
@@ -32,13 +32,20 @@ class BeamProfiler(Device):
     each camera brand. Basler cameras acA1300 - 60gm have a resolution of
     5.3 micrometer/pixel.
     
-    '''   
+    '''
+
+    ImageProxy = device_property(
+        dtype=str,
+        default_value='domain/family/member/attribute',
+        )
+
     data_x = attribute(name='data_x', label='data x',max_dim_x=4096,
                       dtype=(DevFloat,), access=AttrWriteType.READ)
+
     data_y = attribute(name='data_y', label='data y',max_dim_x=4096,
                       dtype=(DevFloat,), access=AttrWriteType.READ)
-    
-    from_x = attribute(label='from x (select pixel position)', dtype="float", 
+
+    from_x = attribute(label='from x (select pixel position)', dtype="float",
                         access=AttrWriteType.READ_WRITE, memorized=True, 
                         hw_memorized=False)
 
@@ -74,7 +81,7 @@ class BeamProfiler(Device):
         self.debug_stream("Preparing device")
         Device.init_device(self)
         try:
-            self.camera = DeviceProxy('MOKE/Basler/autocorrelator')
+            self.image_proxy = AttributeProxy(self.ImageProxy)
             self.debug_stream('Init was done')
         except:
             self.error_stream('Could not contact camera :( ')
@@ -83,7 +90,7 @@ class BeamProfiler(Device):
         
     def read_data_x(self):
         self.debug_stream("Graphing x axis")
-        real_data = self.camera.image
+        real_data = self.image_proxy.read()
         self.N = len(real_data[0,:])
         self.__maximum_x = self.N
         self.x_axis = np.mean(real_data, axis = 0)
@@ -92,7 +99,7 @@ class BeamProfiler(Device):
     
     def read_data_y(self):
         self.debug_stream("Graphing y axis")
-        real_data = self.camera.image
+        real_data = self.image_proxy.read()
         self.N2 = len(real_data[:,0])
         self.__maximum_y = self.N2
         self.y_axis = np.mean(real_data[self.__minimum_y:self.__maximum_y], axis = 1)
