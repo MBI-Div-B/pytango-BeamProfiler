@@ -1,2 +1,3 @@
-# pytango--Laserwidth
-This device calculates the width (in micrometers) of the laser
+# pyTango-BeamProfiler
+
+PyTango Device Server for calculating FWHM of a laser beam profile [µm] in two directions.
