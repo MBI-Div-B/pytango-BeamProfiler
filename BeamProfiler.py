@@ -95,7 +95,7 @@ class BeamProfiler(Device):
 
     def read_data_x(self):
         self.debug_stream("Graphing x axis")
-        real_data = self.image_proxy.read()
+        real_data = self.image_proxy.read().value
         self.N = len(real_data[0, :])
         self.__maximum_x = self.N
         self.x_axis = np.mean(real_data, axis=0)
@@ -104,7 +104,7 @@ class BeamProfiler(Device):
 
     def read_data_y(self):
         self.debug_stream("Graphing y axis")
-        real_data = self.image_proxy.read()
+        real_data = self.image_proxy.read().value
         self.N2 = len(real_data[:, 0])
         self.__maximum_y = self.N2
         self.y_axis = np.mean(real_data[self.__minimum_y:self.__maximum_y], axis=1)
@@ -137,7 +137,7 @@ class BeamProfiler(Device):
 
     def read_width_x(self):
         self.debug_stream('trying to calculate de width x')
-        real_data = self.image_proxy.read()
+        real_data = self.image_proxy.read().value
         self.x_axis = np.mean(real_data, axis=0)
         self.debug_stream('getting data x')
         self.__maximum_x = int(self.__maximum_x)
@@ -168,7 +168,7 @@ class BeamProfiler(Device):
 
     def read_width_y(self):
         self.debug_stream('trying to calculate de width y')
-        real_data = self.image_proxy.read()
+        real_data = self.image_proxy.read().value
         y_axis = np.mean(real_data, axis=1)
         self.__maximum_y = int(self.__maximum_y)
         self.__minimum_y = int(self.__minimum_y)
