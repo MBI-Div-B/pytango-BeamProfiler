@@ -79,7 +79,9 @@ class BeamProfiler(Device):
                         format="%4.3f", access=AttrWriteType.READ)
 
     __minimum_y = 0
-    __minimum_x = 0    
+    __minimum_x = 0
+    __maximum_y = 1
+    __maximum_x = 1
     sigma_try = 33.15
 
     def init_device(self):
@@ -136,7 +138,7 @@ class BeamProfiler(Device):
         self.__maximum_y = value
 
     def read_width_x(self):
-        self.debug_stream('trying to calculate de width x')
+        self.debug_stream('trying to calculate the width x')
         real_data = self.image_proxy.read().value
         self.x_axis = np.mean(real_data, axis=0)
         self.debug_stream('getting data x')
@@ -167,7 +169,7 @@ class BeamProfiler(Device):
         return 2*np.sqrt(2*np.log(2))*self.out_x.best_values['sigma']*self.Resolution
 
     def read_width_y(self):
-        self.debug_stream('trying to calculate de width y')
+        self.debug_stream('trying to calculate the width y')
         real_data = self.image_proxy.read().value
         y_axis = np.mean(real_data, axis=1)
         self.__maximum_y = int(self.__maximum_y)
